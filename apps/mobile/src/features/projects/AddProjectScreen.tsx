@@ -1171,6 +1171,7 @@ export function AddProjectLocalFolderScreen(props: { readonly environmentId?: st
   const [savedDefault, setSavedDefault] = useState<{
     environmentId: EnvironmentId;
     path: string;
+    resolvedPath: string;
     previous: string;
   } | null>(null);
   const browsePath = getFilesystemBrowsePath(pathInput, environment?.platform ?? "");
@@ -1178,7 +1179,9 @@ export function AddProjectLocalFolderScreen(props: { readonly environmentId?: st
   const isSavedDefault =
     savedDefault !== null &&
     savedDefault.environmentId === environment?.environmentId &&
-    savedDefault.path === browsePath.directoryPath;
+    savedDefault.path === browsePath.directoryPath &&
+    normalizeProjectPathForComparison(savedDefault.resolvedPath) ===
+      normalizeProjectPathForComparison(environment?.baseDirectory ?? "");
   const defaultBrowseQuery = useEnvironmentQuery(
     environment && browsePath.isBrowsing
       ? filesystemEnvironment.browse({
@@ -1200,6 +1203,7 @@ export function AddProjectLocalFolderScreen(props: { readonly environmentId?: st
     if (!environment || isSavingDefault || !defaultBrowseQuery.data) return;
     const environmentId = environment.environmentId;
     const path = browsePath.directoryPath;
+    const resolvedPath = defaultBrowseQuery.data.parentPath;
     const previous = isSavedDefault ? savedDefault.previous : (environment.baseDirectory ?? "");
     setIsSavingDefault(true);
     const result = await updateSettings({
@@ -1211,7 +1215,7 @@ export function AddProjectLocalFolderScreen(props: { readonly environmentId?: st
       },
     });
     if (AsyncResult.isSuccess(result)) {
-      setSavedDefault(isSavedDefault ? null : { environmentId, path, previous });
+      setSavedDefault(isSavedDefault ? null : { environmentId, path, resolvedPath, previous });
     }
     setIsSavingDefault(false);
   };

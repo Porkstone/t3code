@@ -748,6 +748,7 @@ function OpenCommandPaletteDialog(props: {
   const [savedDefaultDirectory, setSavedDefaultDirectory] = useState<{
     environmentId: EnvironmentId;
     path: string;
+    resolvedPath: string;
     previous: string;
   } | null>(null);
   const { environments } = useEnvironments();
@@ -1116,7 +1117,9 @@ function OpenCommandPaletteDialog(props: {
   const isSavedDefaultDirectory =
     savedDefaultDirectory !== null &&
     savedDefaultDirectory.environmentId === browseEnvironmentId &&
-    savedDefaultDirectory.path === browseDirectoryPath;
+    savedDefaultDirectory.path === browseDirectoryPath &&
+    normalizeProjectPathForComparison(savedDefaultDirectory.resolvedPath) ===
+      normalizeProjectPathForComparison(defaultDirectory);
   const paletteMode = getCommandPaletteMode({ currentView, isBrowsing });
   const getAddProjectInitialQueryForEnvironment = useCallback(
     (environmentId: EnvironmentId | null): string => {
@@ -3447,6 +3450,7 @@ function OpenCommandPaletteDialog(props: {
                   : defaultDirectory;
                 const environmentId = browseEnvironmentId;
                 const path = browseDirectoryPath;
+                const resolvedPath = browseResult.parentPath;
                 setIsSavingDefaultDirectory(true);
                 void updateServerSettings({
                   environmentId,
@@ -3458,7 +3462,9 @@ function OpenCommandPaletteDialog(props: {
                 })
                   .then((result) => {
                     if (result._tag === "Success") {
-                      setSavedDefaultDirectory(checked ? { environmentId, path, previous } : null);
+                      setSavedDefaultDirectory(
+                        checked ? { environmentId, path, resolvedPath, previous } : null,
+                      );
                     }
                   })
                   .finally(() => setIsSavingDefaultDirectory(false));
