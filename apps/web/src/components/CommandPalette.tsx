@@ -3440,6 +3440,7 @@ function OpenCommandPaletteDialog(props: {
         <div className="px-4 pt-3">
           <label className="flex w-fit items-center gap-2 text-sm">
             <Checkbox
+              variant="accent"
               checked={isSavedDefaultDirectory}
               disabled={
                 isSavingDefaultDirectory || isBrowsePending || !browseResult || !!browseQuery.error
