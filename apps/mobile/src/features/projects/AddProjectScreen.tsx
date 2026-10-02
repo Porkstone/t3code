@@ -1179,7 +1179,8 @@ export function AddProjectLocalFolderScreen(props: { readonly environmentId?: st
   const isSavedDefault =
     savedDefault !== null &&
     savedDefault.environmentId === environment?.environmentId &&
-    savedDefault.path === browsePath.directoryPath &&
+    normalizeProjectPathForComparison(savedDefault.path) ===
+      normalizeProjectPathForComparison(browsePath.directoryPath) &&
     normalizeProjectPathForComparison(savedDefault.resolvedPath) ===
       normalizeProjectPathForComparison(environment?.baseDirectory ?? "");
   const defaultBrowseQuery = useEnvironmentQuery(

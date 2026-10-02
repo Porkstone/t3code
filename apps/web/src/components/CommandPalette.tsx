@@ -1117,7 +1117,8 @@ function OpenCommandPaletteDialog(props: {
   const isSavedDefaultDirectory =
     savedDefaultDirectory !== null &&
     savedDefaultDirectory.environmentId === browseEnvironmentId &&
-    savedDefaultDirectory.path === browseDirectoryPath &&
+    normalizeProjectPathForComparison(savedDefaultDirectory.path) ===
+      normalizeProjectPathForComparison(browseDirectoryPath) &&
     normalizeProjectPathForComparison(savedDefaultDirectory.resolvedPath) ===
       normalizeProjectPathForComparison(defaultDirectory);
   const paletteMode = getCommandPaletteMode({ currentView, isBrowsing });
